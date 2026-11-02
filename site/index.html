@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#090b10"><meta name="description" content="Босс района. Неоновый комикс без слов — история одного очень важного кота.">
+<title>Босс района</title><link rel="canonical" href="https://gta.sometests.ru/">
+<meta property="og:title" content="Босс района"><meta property="og:description" content="В этом районе все знают, кто главный."><meta property="og:type" content="website"><meta property="og:url" content="https://gta.sometests.ru/"><meta property="og:image" content="https://gta.sometests.ru/assets/og.jpg">
+<link rel="icon" href="favicon.svg" type="image/svg+xml"><link rel="preload" as="image" href="assets/cover.webp"><link rel="stylesheet" href="style.css">
+<script src="main.js" defer></script>
+</head>
+<body>
+<svg class="svg-defs" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><defs>
+<symbol id="paw" viewBox="0 0 64 64"><ellipse cx="15" cy="22" rx="7" ry="10" transform="rotate(-25 15 22)"/><ellipse cx="29" cy="14" rx="7" ry="10"/><ellipse cx="44" cy="17" rx="7" ry="10" transform="rotate(15 44 17)"/><ellipse cx="54" cy="30" rx="6" ry="9" transform="rotate(30 54 30)"/><path d="M15 47C15 37 24 28 33 29S52 43 49 51s-11 3-17 3-17 4-17-7Z"/></symbol>
+<symbol id="arrow" viewBox="0 0 32 32"><path d="M16 5v21m-8-8 8 8 8-8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+</defs></svg>
+<div class="reading-progress" aria-hidden="true"><i></i></div>
+<div class="edge-neon edge-neon--left" aria-hidden="true"></div><div class="edge-neon edge-neon--right" aria-hidden="true"></div>
+<canvas id="atmosphere" aria-hidden="true"></canvas>
+<header class="hud"><a href="#start" class="brand" aria-label="В начало истории"><svg><use href="#paw"/></svg></a><button id="motion" class="icon-button" aria-label="Отключить анимацию" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M8 5v14M16 5v14"/></svg></button></header>
+<main id="start" aria-label="Босс района — комикс без слов">
+<section class="cover scene" data-scene data-mode="cover" aria-label="Герой ночного района">
+<div class="cover-grid" aria-hidden="true"></div>
+<div class="cover-composition">
+<div class="cover-strip strip-a" aria-hidden="true"><img src="assets/street-sm.webp" alt=""></div>
+<figure class="cover-main panel"><img src="assets/cover.webp" width="1536" height="1024" fetchpriority="high" alt="Мужчина в кожаной куртке у чёрного седана на неоновой улице"><div class="light-sweep"></div></figure>
+<div class="cover-strip strip-b" aria-hidden="true"><img src="assets/eyes-sm.webp" alt=""></div>
+<div class="neon-cat" aria-hidden="true"><svg viewBox="0 0 120 100"><path d="M24 49 17 10 48 30Q61 25 75 30L105 10 97 51Q107 86 61 90 15 87 24 49Z"/><path d="m35 56 15 4m23 0 15-4M57 70l5 4 5-4M9 64l25 5m-25 9 24-3m57-6 22-5m-22 11 23 3"/></svg></div>
+<div class="neon-orbit" aria-hidden="true"></div>
+</div>
+<a class="scroll-cue" href="#street" aria-label="Листать историю"><svg><use href="#arrow"/></svg></a>
+</section>
+<div class="story">
+<section class="scene cinematic street" id="street" data-scene data-mode="street" aria-label="Прибытие в район">
+<div class="sticky-stage"><figure class="panel wide"><img src="assets/street.webp" srcset="assets/street-sm.webp 720w, assets/street.webp 1536w" sizes="(max-width: 760px) 100vw, 90vw" width="1536" height="1024" alt="Чёрный седан подъезжает к мокрому переулку"><div class="headlight headlight-a"></div><div class="headlight headlight-b"></div><div class="mist"></div></figure><span class="neon-line line-cyan" aria-hidden="true"></span></div>
+</section>
+<section class="scene arrival spread" data-scene data-mode="arrival" aria-label="Герой выходит из машины">
+<figure class="panel arrival-detail"><img src="assets/arrival.webp" loading="lazy" width="1536" height="1024" alt="Ботинок мужчины на мокром асфальте рядом с колесом"><div class="light-sweep"></div></figure>
+<figure class="panel arrival-hero"><img src="assets/hero.webp" loading="lazy" width="1536" height="1024" alt="Мужчина стоит у машины с бумажным пакетом"></figure>
+<div class="speed-marks" aria-hidden="true"></div>
+</section>
+<section class="scene passage" data-scene data-mode="passage" aria-label="Ему уступают дорогу"><figure class="panel wide"><img src="assets/passage.webp" loading="lazy" width="1536" height="1024" alt="Двое мужчин расступаются перед героем в переулке"><div class="neon-wash"></div></figure></section>
+<section class="scene cinematic walk" data-scene data-mode="walk" aria-label="В глубине переулка"><div class="sticky-stage"><figure class="panel tall"><img src="assets/walk.webp" loading="lazy" width="1536" height="1024" alt="Мужчина идёт к свету в конце переулка"><div class="vignette"></div><div class="mist"></div></figure><div class="rail rail-left" aria-hidden="true"></div><div class="rail rail-right" aria-hidden="true"></div></div></section>
+<section class="scene cinematic encounter" data-scene data-mode="shadow" aria-label="Встреча с огромной тенью"><div class="sticky-stage"><figure class="panel wide"><img src="assets/shadow.webp" loading="lazy" width="1536" height="1024" alt="Огромная кошачья тень на стене перед мужчиной"><div class="shadow-mask"></div><div class="amber-pulse"></div></figure><div class="tension-lines" aria-hidden="true"></div></div></section>
+<section class="scene suspense spread" data-scene data-mode="suspense" aria-label="Напряжённая пауза">
+<figure class="panel eyes"><img src="assets/eyes.webp" loading="lazy" width="1536" height="1024" alt="Сосредоточенный взгляд мужчины"></figure>
+<figure class="panel bag"><img src="assets/bag.webp" loading="lazy" width="1536" height="1024" alt="Мужчина опускает руку в бумажный пакет"><div class="light-sweep"></div></figure>
+<span class="neon-line line-pink" aria-hidden="true"></span></section>
+<section class="scene offering" data-scene data-mode="offering" aria-label="Подношение"><figure class="panel wide"><img src="assets/offering.webp" loading="lazy" width="1536" height="1024" alt="Он торжественно предъявляет банку кошачьего корма"><div class="can-glint"></div></figure><div class="burst-lines" aria-hidden="true"></div></section>
+<section class="scene cinematic revelation" data-scene data-mode="boss" aria-label="Настоящий босс района"><div class="sticky-stage"><div class="boss-halo" aria-hidden="true"></div><figure class="panel wide"><img src="assets/reveal.webp" loading="lazy" width="1536" height="1024" alt="Маленький кот на ящике отбрасывает огромную тень от фонаря; мужчина предлагает ему корм"></figure><svg class="boss-paw" aria-hidden="true"><use href="#paw"/></svg></div></section>
+<section class="scene refusal" data-scene data-mode="refusal" aria-label="Босс не впечатлён"><figure class="panel wide"><img src="assets/boss.webp" loading="lazy" width="1536" height="1024" alt="Кот важно отворачивается от миски, мужчина ждёт его решения"></figure><span class="neon-line line-pink" aria-hidden="true"></span></section>
+<section class="scene service spread" data-scene data-mode="dinner" aria-label="Обслуживание важного гостя"><figure class="panel dinner"><img src="assets/dinner.webp" loading="lazy" width="1536" height="1024" alt="Мужчина терпеливо кормит кота с ложки"></figure><div class="service-decoration" aria-hidden="true"><svg><use href="#paw"/></svg><i></i><i></i><i></i></div></section>
+<section class="scene cinematic shelter" data-scene data-mode="rain" aria-label="Под зонтом"><div class="sticky-stage"><figure class="panel wide"><img src="assets/umbrella.webp" loading="lazy" width="1536" height="1024" alt="Кот ест под зонтом, пока мужчина мокнет рядом"><div class="rain-overlay"></div><div class="warmth"></div></figure></div></section>
+<section class="scene takeover" data-scene data-mode="takeover" aria-label="Водительское место занято"><figure class="panel wide"><img src="assets/driver.webp" loading="lazy" width="1536" height="1024" alt="Кот сидит за рулём, а мужчина смотрит на него через открытую дверь"></figure><div class="neon-wash"></div></section>
+<section class="scene cinematic finale" data-scene data-mode="finale" aria-label="Личный водитель босса"><div class="sticky-stage"><div class="finale-ring" aria-hidden="true"></div><figure class="panel wide"><img src="assets/ride.webp" loading="lazy" width="1671" height="941" alt="Мужчина ведёт машину, а довольный кот развалился на его куртке на заднем сиденье"></figure><button class="pet-button" id="pet" aria-label="Погладить босса"><svg><use href="#paw"/></svg></button><a class="replay icon-button" href="#start" aria-label="Посмотреть комикс сначала"><svg viewBox="0 0 24 24"><path d="M5 8a8 8 0 1 1-1 8M5 3v6h6"/></svg></a></div></section>
+</div>
+</main><div id="pet-reaction" aria-hidden="true"></div>
+</body></html>
