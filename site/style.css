@@ -832,6 +832,300 @@ p, h1, h2, figure, ul, dl, dd { margin: 0; }
   opacity: min(clamp(0, (var(--p, 0) - .74) * 7, 1), clamp(0, (1 - var(--p, 0)) * 9, 1));
 }
 
+
+/* экипировка: прицел на вещи, характеристики пилота и инвентарь */
+.reticle {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  width: 15%;
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  pointer-events: none;
+  --act: min(clamp(0, (var(--p, 0) - var(--t) + .03) * 25, 1), clamp(0, (var(--t) + .13 - var(--p, 0)) * 25, 1));
+  opacity: var(--act);
+  scale: calc(1.6 - var(--act) * .6);
+  rotate: calc((1 - var(--act)) * 45deg);
+  background:
+    linear-gradient(var(--gold), var(--gold)) 0 0 / 28% 5px no-repeat,
+    linear-gradient(var(--gold), var(--gold)) 0 0 / 5px 28% no-repeat,
+    linear-gradient(var(--gold), var(--gold)) 100% 0 / 28% 5px no-repeat,
+    linear-gradient(var(--gold), var(--gold)) 100% 0 / 5px 28% no-repeat,
+    linear-gradient(var(--gold), var(--gold)) 0 100% / 28% 5px no-repeat,
+    linear-gradient(var(--gold), var(--gold)) 0 100% / 5px 28% no-repeat,
+    linear-gradient(var(--gold), var(--gold)) 100% 100% / 28% 5px no-repeat,
+    linear-gradient(var(--gold), var(--gold)) 100% 100% / 5px 28% no-repeat;
+  filter: drop-shadow(0 0 1.5px var(--ink)) drop-shadow(0 0 1.5px var(--ink));
+}
+.reticle i {
+  position: absolute;
+  inset: 44%;
+  border-radius: 50%;
+  background: var(--gold);
+  animation: ping 1s ease-out infinite;
+}
+
+.stats {
+  position: absolute;
+  top: calc(env(safe-area-inset-top, 0px) + 16px);
+  left: var(--gutter-l);
+  width: min(46vw, 210px);
+  padding: 10px 14px 12px;
+  background: rgba(18, 16, 18, .8);
+  border-left: 4px solid var(--coral);
+  display: grid;
+  gap: 6px;
+  color: #fff;
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+.stats__title { font-family: var(--f-script); font-size: 30px; letter-spacing: 0; text-transform: none; color: var(--coral); line-height: .9; }
+.stat {
+  --v: clamp(.05, var(--from) + (var(--p, 0) - .1) * var(--rate), 1);
+  display: grid;
+  gap: 3px;
+}
+.stat i {
+  height: 8px;
+  background: rgba(255, 255, 255, .18);
+  border: 2px solid #000;
+  position: relative;
+}
+.stat i::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  width: calc(var(--v) * 100%);
+  background: linear-gradient(90deg, var(--cash), var(--gold));
+}
+
+.slots {
+  position: absolute;
+  right: var(--gutter-r);
+  top: calc(env(safe-area-inset-top, 0px) + 130px);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+.slot {
+  --on: clamp(0, (var(--p, 0) - var(--t) - .04) * 20, 1);
+  --hot: min(var(--on), clamp(0, (var(--t) + .16 - var(--p, 0)) * 20, 1));
+  position: relative;
+  width: clamp(44px, 12vw, 64px);
+  aspect-ratio: 1;
+  border: 3px solid var(--ink);
+  outline: 2px dashed rgba(255, 255, 255, .6);
+  outline-offset: -7px;
+  background: rgba(18, 16, 18, .55);
+}
+.slot__img {
+  position: absolute;
+  inset: 0;
+  background-image: url("assets/grandprix/gear.webp");
+  background-size: 500% auto;
+  background-repeat: no-repeat;
+  opacity: var(--on);
+  scale: calc(1.6 - var(--on) * .6);
+  box-shadow: inset 0 0 0 3px var(--gold);
+}
+.slot__name {
+  position: absolute;
+  right: calc(100% + 10px);
+  top: 50%;
+  translate: 0 -50%;
+  white-space: nowrap;
+  padding: 3px 8px;
+  background: var(--gold);
+  color: var(--ink);
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  opacity: var(--hot);
+}
+.slot__name::before { content: "+ "; }
+
+/* табло позиций, как в трансляции гонки */
+.tower {
+  position: fixed;
+  z-index: 50;
+  top: calc(env(safe-area-inset-top, 0px) + 14px);
+  left: var(--gutter-l);
+  width: 74px;
+  height: calc(12 * 21px);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  pointer-events: none;
+  opacity: 0;
+  translate: -20px 0;
+  transition: opacity .4s, translate .4s var(--out);
+}
+.tower.show { opacity: 1; translate: 0 0; }
+.tower li {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 19px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(18, 16, 18, .82);
+  color: #fff;
+  font-weight: 800;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  transition: transform .6s var(--out);
+}
+.tower li::before {
+  content: attr(data-rank);
+  width: 20px;
+  text-align: center;
+  background: #fff;
+  color: var(--ink);
+  align-self: stretch;
+  display: grid;
+  place-items: center;
+}
+.tower li i { width: 4px; align-self: stretch; background: var(--team); }
+.tower li.me { background: #fff; color: var(--ink); }
+.tower li.me::before { background: var(--cop-red); color: #fff; }
+
+/* тахометр-лампочки и передача */
+.rpm {
+  position: absolute;
+  right: var(--gutter-r);
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 18px);
+  display: grid;
+  grid-template-columns: auto auto;
+  align-items: end;
+  gap: 4px 10px;
+  color: #fff;
+}
+.rpm__bar {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 3px;
+  padding: 5px;
+  background: rgba(18, 16, 18, .85);
+  border: 2px solid #000;
+}
+.rpm__bar i { width: clamp(8px, 2.4vw, 12px); height: 16px; background: #2a2527; }
+.rpm__bar i.on:nth-child(-n + 6) { background: var(--cash); box-shadow: 0 0 8px var(--cash); }
+.rpm__bar i.on:nth-child(n + 7):nth-child(-n + 10) { background: var(--gold); box-shadow: 0 0 8px var(--gold); }
+.rpm__bar i.on:nth-child(n + 11) { background: var(--cop-red); box-shadow: 0 0 8px var(--cop-red); }
+.rpm.shift .rpm__bar i { background: #fff; }
+.rpm__gear {
+  font-family: var(--f-logo);
+  font-size: 54px;
+  line-height: .9;
+  color: var(--gold);
+  -webkit-text-stroke: 7px var(--ink);
+  paint-order: stroke fill;
+}
+.rpm.shift .rpm__gear { animation: bump .25s var(--pop); }
+.rpm__kmh { justify-self: end; font-weight: 800; font-size: 14px; letter-spacing: .1em; -webkit-text-stroke: 4px var(--ink); paint-order: stroke fill; }
+.rpm__kmh b { font-family: var(--f-logo); font-weight: 400; font-size: 24px; letter-spacing: 0; }
+
+/* штамп «замена пилота» */
+.stamp {
+  position: absolute;
+  right: 8%;
+  bottom: 18%;
+  display: grid;
+  justify-items: center;
+  padding: 10px 20px 12px;
+  border: 6px double var(--cop-red);
+  background: rgba(251, 241, 220, .88);
+  color: var(--cop-red);
+  font-family: var(--f-logo);
+  text-transform: uppercase;
+  line-height: 1;
+  --s: clamp(0, (var(--p, 0) - .72) * 14, 1);
+  opacity: var(--s);
+  transform: rotate(-12deg) scale(calc(2.6 - var(--s) * 1.6));
+}
+.stamp span { font-size: clamp(22px, 6vw, 40px); }
+.stamp b { font-weight: 400; font-size: clamp(16px, 4vw, 24px); color: var(--ink); }
+
+/* телеповтор в шпильке */
+.pin#hairpin { --r: min(clamp(0, (var(--p, 0) - .22) * 10, 1), clamp(0, (.88 - var(--p, 0)) * 10, 1)); }
+.pin#hairpin .stage img { filter: saturate(calc(1 - var(--r) * .55)) contrast(calc(1 + var(--r) * .12)); }
+.replay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: var(--r);
+  background: repeating-linear-gradient(0deg, rgba(0, 0, 0, .14) 0 2px, transparent 2px 4px);
+}
+.replay::before,
+.replay::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 11%;
+  background: var(--ink);
+}
+.replay::before { top: 0; }
+.replay::after { bottom: 0; }
+.replay__tag {
+  position: absolute;
+  z-index: 1;
+  left: 50%;
+  translate: -50% 0;
+  top: calc(11% + 14px);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #fff;
+  font-weight: 800;
+  font-size: 20px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  -webkit-text-stroke: 4px var(--ink);
+  paint-order: stroke fill;
+}
+.replay__tag::before {
+  content: "";
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--cop-red);
+  border: 2px solid var(--ink);
+  animation: starblink 1s steps(1) infinite;
+}
+.replay__time {
+  position: absolute;
+  z-index: 1;
+  right: var(--gutter-r);
+  bottom: calc(11% + 14px);
+  color: #fff;
+  font-weight: 800;
+  font-size: 16px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  -webkit-text-stroke: 4px var(--ink);
+  paint-order: stroke fill;
+}
+
+/* клетчатый флаг проносится по экрану перед победной надписью */
+.checker {
+  position: absolute;
+  top: -10%;
+  bottom: -10%;
+  left: -10%;
+  width: 120%;
+  pointer-events: none;
+  background: conic-gradient(var(--ink) 25%, #fff 0 50%, var(--ink) 0 75%, #fff 0) 0 0 / 72px 72px;
+  --c: clamp(0, (var(--p, 0) - .38) / .2, 1);
+  transform: translateX(calc((var(--c) * 2 - 1) * 110%)) skewX(-14deg);
+}
+
 /* ---------- телефоны ---------- */
 
 @media (orientation: portrait) {

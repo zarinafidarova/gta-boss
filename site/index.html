@@ -43,6 +43,8 @@
   </div>
 </div>
 
+<ol class="tower" id="tower" aria-hidden="true"></ol>
+
 <div class="radar" aria-hidden="true">
   <svg viewBox="0 0 200 200">
     <defs><clipPath id="radar-clip"><circle cx="100" cy="100" r="96"/></clipPath></defs>
@@ -268,7 +270,8 @@
       <div class="stage" data-ar="1.5">
         <img src="assets/grandprix/paddock.webp" width="1536" height="1024" loading="lazy" alt="В паддоке у гавани усатый владелец команды протягивает ему шлем, механики готовят белый болид номер 7, а заболевшего пилота с градусником уводят врачи">
       </div>
-      <p class="objective" style="--a:.55;--b:.97">Replace the <b>driver</b>.</p>
+      <p class="objective" style="--a:.35;--b:.68">Replace the <b>driver</b>.</p>
+      <p class="stamp" aria-hidden="true"><span>Remplaçant</span><b>No. 7</b></p>
     </div>
   </section>
 
@@ -282,20 +285,26 @@
     <div class="pin__view">
       <div class="stage" data-ar="1.5">
         <img src="assets/grandprix/gear.webp" width="1536" height="1024" loading="lazy" alt="Вид сверху на скамейку в гараже: шлем с красной полосой и очками, кожаные перчатки, авиаторы, ключ и белый комбинезон с номером 7, его рука берёт шлем">
-        <span class="mark" style="--x:36%;--y:30%;--t:.12"></span>
-        <span class="mark" style="--x:47%;--y:22%;--t:.26"></span>
-        <span class="mark" style="--x:27%;--y:76%;--t:.4"></span>
-        <span class="mark" style="--x:45%;--y:59%;--t:.54"></span>
-        <span class="mark" style="--x:52%;--y:76%;--t:.68"></span>
-        <span class="mark" style="--x:76%;--y:44%;--t:.82"></span>
+        <span class="reticle" style="--x:38%;--y:29%;--t:0.12"><i></i></span>
+        <span class="reticle" style="--x:47%;--y:21%;--t:0.26"><i></i></span>
+        <span class="reticle" style="--x:28%;--y:76%;--t:0.4"><i></i></span>
+        <span class="reticle" style="--x:44%;--y:60%;--t:0.54"><i></i></span>
+        <span class="reticle" style="--x:51%;--y:75%;--t:0.68"><i></i></span>
+        <span class="reticle" style="--x:77%;--y:47%;--t:0.82"><i></i></span>
       </div>
-      <ul class="check">
-        <li style="--t:.12">Helmet</li>
-        <li style="--t:.26">Goggles</li>
-        <li style="--t:.4">Gloves</li>
-        <li style="--t:.54">Aviators</li>
-        <li style="--t:.68">Ignition key</li>
-        <li style="--t:.82">Race suit</li>
+      <div class="stats" aria-hidden="true">
+        <p class="stats__title">Driver</p>
+        <p class="stat" style="--from:.18;--rate:1.1">Speed<i></i></p>
+        <p class="stat" style="--from:.1;--rate:.9">Nerve<i></i></p>
+        <p class="stat" style="--from:.4;--rate:1.4">Style<i></i></p>
+      </div>
+      <ul class="slots" aria-hidden="true">
+        <li class="slot" data-x="0.38" data-y="0.29" style="--t:0.12"><span class="slot__img"></span><span class="slot__name">Helmet</span></li>
+        <li class="slot" data-x="0.47" data-y="0.21" style="--t:0.26"><span class="slot__img"></span><span class="slot__name">Goggles</span></li>
+        <li class="slot" data-x="0.28" data-y="0.76" style="--t:0.4"><span class="slot__img"></span><span class="slot__name">Gloves</span></li>
+        <li class="slot" data-x="0.44" data-y="0.6" style="--t:0.54"><span class="slot__img"></span><span class="slot__name">Aviators</span></li>
+        <li class="slot" data-x="0.51" data-y="0.75" style="--t:0.68"><span class="slot__img"></span><span class="slot__name">Ignition key</span></li>
+        <li class="slot" data-x="0.77" data-y="0.47" style="--t:0.82"><span class="slot__img"></span><span class="slot__name">Race suit</span></li>
       </ul>
     </div>
   </section>
@@ -322,9 +331,10 @@
         <img src="assets/grandprix/harbor.webp" width="1536" height="1024" loading="lazy" alt="Трасса вдоль гавани с яхтами: белый болид номер 7 обгоняет соперников, впереди зелёный болид номер 1">
       </div>
       <div class="speedlines" aria-hidden="true"></div>
-      <div class="speedo" aria-hidden="true">
-        <svg viewBox="0 0 120 70"><path class="speedo__arc" d="M10 64A50 50 0 0 1 110 64"/><path class="speedo__fill" d="M10 64A50 50 0 0 1 110 64" pathLength="1"/></svg>
-        <span class="speedo__num">120</span><span class="speedo__unit">km/h</span>
+      <div class="rpm" aria-hidden="true">
+        <span class="rpm__bar"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
+        <span class="rpm__gear">2</span>
+        <span class="rpm__kmh"><b>120</b> km/h</span>
       </div>
     </div>
   </section>
@@ -337,9 +347,10 @@
       <div class="speedlines" aria-hidden="true"></div>
       <span class="tunnel-dark" aria-hidden="true"></span>
       <span class="tunnel-exit" aria-hidden="true"></span>
-      <div class="speedo" aria-hidden="true">
-        <svg viewBox="0 0 120 70"><path class="speedo__arc" d="M10 64A50 50 0 0 1 110 64"/><path class="speedo__fill" d="M10 64A50 50 0 0 1 110 64" pathLength="1"/></svg>
-        <span class="speedo__num">250</span><span class="speedo__unit">km/h</span>
+      <div class="rpm" aria-hidden="true">
+        <span class="rpm__bar"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
+        <span class="rpm__gear">2</span>
+        <span class="rpm__kmh"><b>250</b> km/h</span>
       </div>
     </div>
   </section>
@@ -349,7 +360,7 @@
       <div class="stage" data-ar="1.5">
         <img src="assets/grandprix/hairpin.webp" width="1536" height="1024" loading="lazy" alt="В шпильке у отеля белый болид номер 7 в заносе обходит зелёный болид номер 1, зрители на балконах вскочили">
       </div>
-      <div class="jackpot" style="--at:.58;--until:.96" aria-hidden="true"><span class="jackpot__script">Dépassement!</span><span class="jackpot__sum">P1</span></div>
+      <div class="replay" aria-hidden="true"><span class="replay__tag">Replay</span><span class="replay__time">Lap 3 · T9</span></div>
     </div>
   </section>
 
@@ -358,7 +369,8 @@
       <div class="stage" data-ar="1.5">
         <img src="assets/grandprix/finish.webp" width="1536" height="1024" loading="lazy" alt="Клетчатый флаг: он пересекает финишную черту на нос впереди зелёного болида и поднимает кулак, трибуны ликуют">
       </div>
-      <div class="jackpot" style="--at:.48;--until:.97" aria-hidden="true"><span class="jackpot__script">Vainqueur!</span><span class="jackpot__sum">1st</span></div>
+      <span class="checker" aria-hidden="true"></span>
+      <div class="jackpot" style="--at:.6;--until:.97" aria-hidden="true"><span class="jackpot__script">Vainqueur!</span><span class="jackpot__sum">1st</span></div>
     </div>
   </section>
 

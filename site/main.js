@@ -64,12 +64,12 @@
     ],
     gear: [
       { t: 0, x: .5, y: .5, z: 1 },
-      { t: .12, x: .36, y: .3, z: 1.3 },
-      { t: .26, x: .47, y: .22, z: 1.3 },
-      { t: .4, x: .27, y: .76, z: 1.3 },
-      { t: .54, x: .45, y: .59, z: 1.3 },
-      { t: .68, x: .52, y: .76, z: 1.3 },
-      { t: .82, x: .76, y: .44, z: 1.3 },
+      { t: .12, x: .38, y: .29, z: 1.35 },
+      { t: .26, x: .47, y: .21, z: 1.35 },
+      { t: .4, x: .28, y: .76, z: 1.35 },
+      { t: .54, x: .44, y: .6, z: 1.35 },
+      { t: .68, x: .51, y: .75, z: 1.35 },
+      { t: .82, x: .77, y: .47, z: 1.35 },
       { t: 1, x: .5, y: .5, z: 1 },
     ],
     grid: [
@@ -132,6 +132,13 @@
       stage.style.width = w + 'px';
       stage.style.height = h + 'px';
       Object.assign(pin, { _w: w, _h: h, _vw: vw, _vh: vh });
+    });
+    document.querySelectorAll('.slot').forEach((slot) => {
+      const img = slot.querySelector('.slot__img');
+      const S = img.clientWidth;
+      const iw = S * 5;
+      const ih = iw / 1.5;
+      img.style.backgroundPosition = `${S / 2 - slot.dataset.x * iw}px ${S / 2 - slot.dataset.y * ih}px`;
     });
   }
 
@@ -249,7 +256,36 @@
   const posEl = byId('pos');
   const lapEl = byId('lap');
   const speedPins = pins.filter((p) => p.dataset.speed);
-  speedPins.forEach((p) => { p._num = p.querySelector('.speedo__num'); });
+  speedPins.forEach((p) => {
+    p._num = p.querySelector('.speedo__num, .rpm__kmh b');
+    p._rpm = p.querySelector('.rpm');
+    if (p._rpm) p._leds = [...p._rpm.querySelectorAll('.rpm__bar i')];
+  });
+
+  // табло позиций: номер 7 поднимается, остальные сдвигаются
+  const tower = byId('tower');
+  const rivals = [[1, '#1f5c3a'], [3, '#2f7bff'], [4, '#f2c14e'], [5, '#d7263d'], [8, '#ff8c38'], [9, '#7a4fd1'], [11, '#2fb5a4'], [12, '#ff3d8b'], [14, '#8a8a8a'], [16, '#b56aa8'], [18, '#5a3f8c']];
+  const rows = new Map();
+  [[7, '#d7263d'], ...rivals].forEach(([n, c]) => {
+    const li = document.createElement('li');
+    li.innerHTML = `<i></i>No ${n}`;
+    li.style.setProperty('--team', c);
+    if (n === 7) li.classList.add('me');
+    tower.appendChild(li);
+    rows.set(n, li);
+  });
+  let towerPos = 0;
+  function placeTower(pos) {
+    if (pos === towerPos) return;
+    towerPos = pos;
+    const order = rivals.map(([n]) => n);
+    order.splice(pos - 1, 0, 7);
+    order.forEach((n, i) => {
+      const li = rows.get(n);
+      li.dataset.rank = i + 1;
+      li.style.transform = `translateY(${i * 21}px)`;
+    });
+  }
   const lights = [...byId('lights').querySelectorAll('i')];
 
   const skyStops = [
@@ -316,7 +352,9 @@
     if (cur.dataset.pos) {
       const [p0, p1] = cur.dataset.pos.split(' ').map(Number);
       const [l0, l1] = cur.dataset.lap.split(' ').map(Number);
-      setNum(posEl, Math.round(lerp(p0, p1, k)));
+      const pos = Math.round(lerp(p0, p1, k));
+      setNum(posEl, pos);
+      placeTower(pos);
       setNum(lapEl, Math.round(lerp(l0, l1, k)));
     }
 
@@ -351,6 +389,7 @@
 
     // на обложке и на экране «mission passed» интерфейс прячется, как в игре
     const show = !cur.classList.contains('cover') && !cur.classList.contains('passed');
+    tower.classList.toggle('show', Boolean(cur.dataset.pos) && show);
     hud.classList.toggle('show', show);
     radar.classList.toggle('show', show);
   }
@@ -395,6 +434,23 @@
       const v = lerp(a, b, ease(pin._p));
       pin.style.setProperty('--speed', (v / 300).toFixed(3));
       pin._num.textContent = Math.round(v);
+      if (pin._rpm) {
+        // передачи: на каждой обороты растут от зелёного к красному, потом щелчок вниз
+        const bands = [0, 90, 140, 190, 235, 270, 320];
+        let g = 1;
+        while (g < bands.length - 1 && v >= bands[g]) g++;
+        const frac = clamp((v - bands[g - 1]) / (bands[g] - bands[g - 1]));
+        const lit = Math.round(3 + frac * 9);
+        pin._leds.forEach((l, i) => l.classList.toggle('on', i < lit));
+        const gearEl = pin._rpm.querySelector('.rpm__gear');
+        if (gearEl.textContent !== String(g)) {
+          gearEl.textContent = g;
+          pin._rpm.classList.remove('shift');
+          void pin._rpm.offsetWidth;
+          pin._rpm.classList.add('shift');
+          setTimeout(() => pin._rpm.classList.remove('shift'), 140);
+        }
+      }
     }
 
     // стартовые огни загораются по одному и гаснут все сразу
@@ -404,9 +460,9 @@
     byId('lights').classList.toggle('out', gp > .66);
 
     const fin = byId('finish')._p;
-    if (fin > .48 && !finishHit) {
+    if (fin > .6 && !finishHit) {
       finishHit = true;
-      if (fin < .8) {
+      if (fin < .85) {
         spawn('confetti', W * .5, H * .4, 110, 1.6);
         spawn('confetti', W * .2, H * .6, 50, 1);
         spawn('confetti', W * .8, H * .6, 50, 1);
