@@ -55,7 +55,62 @@
       { t: .5, x: .5, y: .5, z: 1 },
       { t: 1, x: .93, y: .3, z: 1.5 },
     ],
+    // вторая миссия
+    paddock: [
+      { t: 0, x: .2, y: .35, z: 1.25 },
+      { t: .35, x: .6, y: .32, z: 1.15 },
+      { t: .7, x: .88, y: .5, z: 1.2 },
+      { t: 1, x: .5, y: .5, z: 1 },
+    ],
+    gear: [
+      { t: 0, x: .5, y: .5, z: 1 },
+      { t: .12, x: .36, y: .3, z: 1.3 },
+      { t: .26, x: .47, y: .22, z: 1.3 },
+      { t: .4, x: .27, y: .76, z: 1.3 },
+      { t: .54, x: .45, y: .59, z: 1.3 },
+      { t: .68, x: .52, y: .76, z: 1.3 },
+      { t: .82, x: .76, y: .44, z: 1.3 },
+      { t: 1, x: .5, y: .5, z: 1 },
+    ],
+    grid: [
+      { t: 0, x: .85, y: .12, z: 1.2 },
+      { t: .3, x: .5, y: .18, z: 1.1 },
+      { t: .5, x: .22, y: .42, z: 1.25 },
+      { t: .7, x: .7, y: .5, z: 1.15 },
+      { t: 1, x: .5, y: .62, z: 1 },
+    ],
+    harbor: [
+      { t: 0, x: .3, y: .4, z: 1.15 },
+      { t: .6, x: .68, y: .58, z: 1.15 },
+      { t: 1, x: .55, y: .45, z: 1 },
+    ],
+    tunnel: [
+      { t: 0, x: .25, y: .45, z: 1.25 },
+      { t: .7, x: .72, y: .45, z: 1.3 },
+      { t: 1, x: .85, y: .4, z: 1.4 },
+    ],
+    hairpin: [
+      { t: 0, x: .75, y: .22, z: 1.25 },
+      { t: .45, x: .55, y: .6, z: 1.1 },
+      { t: 1, x: .45, y: .58, z: 1.3 },
+    ],
+    finish: [
+      { t: 0, x: .2, y: .2, z: 1.25 },
+      { t: .5, x: .48, y: .42, z: 1.15 },
+      { t: 1, x: .5, y: .5, z: 1 },
+    ],
   };
+
+  // тряска камеры: при уходе из казино, на старте и в туннеле
+  function shakeFor(pin) {
+    if (reduceMotion) return 0;
+    const p = pin._p;
+    if (pin.id === 'exit') return clamp((p - .1) * 2) * 6;
+    if (pin.id === 'grid') return p > .66 && p < .76 ? 12 : 0;
+    if (pin.id === 'tunnel') return p < .8 ? 3 : 0;
+    if (pin.id === 'harbor') return 2;
+    return 0;
+  }
 
   function camAt(keys, p) {
     let i = 0;
@@ -189,7 +244,13 @@
   const route = byId('route');
   const player = byId('player');
   const routeLen = route.getTotalLength();
-  const kmh = byId('kmh');
+  const circuit = byId('circuit');
+  const circuitLen = circuit.getTotalLength();
+  const posEl = byId('pos');
+  const lapEl = byId('lap');
+  const speedPins = pins.filter((p) => p.dataset.speed);
+  speedPins.forEach((p) => { p._num = p.querySelector('.speedo__num'); });
+  const lights = [...byId('lights').querySelectorAll('i')];
 
   const skyStops = [
     [485, '#bfe6f7', '#fdf3dd'],
@@ -213,6 +274,14 @@
   }
 
   const fmt = (n) => '$' + Math.round(n).toLocaleString('en-US');
+  function setNum(el, v) {
+    const t = String(v);
+    if (el.textContent === t) return;
+    el.textContent = t;
+    el.classList.remove('bump');
+    void el.offsetWidth;
+    el.classList.add('bump');
+  }
   let lastCash = '';
   let lastStars = -1;
 
@@ -231,14 +300,30 @@
     root.style.setProperty('--bg1', c1);
     root.style.setProperty('--bg2', c2);
 
-    const pt = route.getPointAtLength(routeLen * lerp(r0, r1, k));
-    const ahead = route.getPointAtLength(Math.min(routeLen, routeLen * lerp(r0, r1, k) + 2));
+    // на радаре: в первой миссии маршрут по побережью, во второй три круга по трассе
+    const race = cur.dataset.map === 'race';
+    radar.classList.toggle('race', race);
+    const path = race ? circuit : route;
+    const len = race ? circuitLen : routeLen;
+    const along = race ? ((lerp(r0, r1, k) * 3) % 1) * len : lerp(r0, r1, k) * len;
+    const pt = path.getPointAtLength(along);
+    const ahead = path.getPointAtLength(Math.min(len, along + 2));
     const ang = Math.atan2(ahead.y - pt.y, ahead.x - pt.x) * 180 / Math.PI + 90;
     player.setAttribute('transform', `translate(${pt.x} ${pt.y}) rotate(${ang})`);
 
+    // позиция и круг во время гонки
+    hud.classList.toggle('race', Boolean(cur.dataset.pos));
+    if (cur.dataset.pos) {
+      const [p0, p1] = cur.dataset.pos.split(' ').map(Number);
+      const [l0, l1] = cur.dataset.lap.split(' ').map(Number);
+      setNum(posEl, Math.round(lerp(p0, p1, k)));
+      setNum(lapEl, Math.round(lerp(l0, l1, k)));
+    }
+
     // деньги растут вместе с выигрышем в рулетке
     const rp = byId('roulette')._p || 0;
-    const cash = fmt(lerp(1250, 7777777, ease(clamp((rp - .55) / .2))));
+    const podiumP = byId('podium')._p || 0;
+    const cash = fmt(lerp(1250, 7777777, ease(clamp((rp - .55) / .2))) + 1e6 * ease(clamp((podiumP - .35) / .35)));
     if (cash !== lastCash) {
       cashEl.textContent = cash;
       if (lastCash && rp > .55 && rp < .76) { cashEl.classList.remove('bump'); void cashEl.offsetWidth; cashEl.classList.add('bump'); }
@@ -265,7 +350,7 @@
     root.style.setProperty('--siren', (siren * .85).toFixed(3));
 
     // на обложке и на экране «mission passed» интерфейс прячется, как в игре
-    const show = scrollY > vh * .55 && document.querySelector('.passed')._top > vh * .5;
+    const show = !cur.classList.contains('cover') && !cur.classList.contains('passed');
     hud.classList.toggle('show', show);
     radar.classList.toggle('show', show);
   }
@@ -279,6 +364,7 @@
   /* ---------- главный цикл ---------- */
 
   let jackpotHit = false;
+  let finishHit = false;
   let sprayTick = 0;
 
   function frame(time) {
@@ -293,18 +379,41 @@
         : clamp((vh - r.top) / (vh + r.height));
       s._p = p;
       s.style.setProperty('--p', p.toFixed(4));
-      if (!s.classList.contains('on') && r.top < vh * .7 && r.bottom > 0) s.classList.add('on');
+      if (!s.classList.contains('on') && r.top < vh * .7 && r.bottom > 0) {
+        s.classList.add('on');
+        if (s.classList.contains('cover') && s !== cover) setTimeout(() => s.classList.add('loaded'), reduceMotion ? 0 : 2800);
+      }
     }
 
-    const exitShake = !reduceMotion ? clamp((byId('exit')._p - .1) * 2) * 6 : 0;
     for (const pin of pins) {
       if (pin._top > vh || pin._top + pin.offsetHeight < 0) continue;
-      placeCamera(pin, pin._p, pin.id === 'exit' ? exitShake : 0);
+      placeCamera(pin, pin._p, shakeFor(pin));
     }
 
-    const drive = byId('drive');
-    drive.style.setProperty('--speed', (.2 + ease(drive._p) * .75).toFixed(3));
-    kmh.textContent = Math.round(40 + ease(drive._p) * 147);
+    for (const pin of speedPins) {
+      const [a, b] = pin.dataset.speed.split(' ').map(Number);
+      const v = lerp(a, b, ease(pin._p));
+      pin.style.setProperty('--speed', (v / 300).toFixed(3));
+      pin._num.textContent = Math.round(v);
+    }
+
+    // стартовые огни загораются по одному и гаснут все сразу
+    const gp = byId('grid')._p;
+    const lit = gp > .66 ? 0 : gp < .15 ? 0 : Math.min(5, Math.floor((gp - .15) / .09) + 1);
+    lights.forEach((l, i) => l.classList.toggle('on', i < lit));
+    byId('lights').classList.toggle('out', gp > .66);
+
+    const fin = byId('finish')._p;
+    if (fin > .48 && !finishHit) {
+      finishHit = true;
+      if (fin < .8) {
+        spawn('confetti', W * .5, H * .4, 110, 1.6);
+        spawn('confetti', W * .2, H * .6, 50, 1);
+        spawn('confetti', W * .8, H * .6, 50, 1);
+      }
+    } else if (fin < .35 && finishHit) {
+      finishHit = false;
+    }
 
     const roulette = byId('roulette');
     const rp = roulette._p;
@@ -332,19 +441,21 @@
 
   /* ---------- шампанское ---------- */
 
-  const pop = byId('pop');
-  const popLabel = byId('pop-label');
-  const labels = ['Cheers!', 'One more', 'Santé!', 'To Monaco', 'Pop the champagne'];
-  let pops = 0;
-  pop.addEventListener('click', () => {
-    pop.classList.remove('popped');
-    void pop.offsetWidth;
-    pop.classList.add('popped');
-    const r = pop.getBoundingClientRect();
-    spawn('confetti', r.left + r.width / 2, r.top, 90, 1.1);
-    spawn('bill', r.left + r.width / 2, r.top, 18, 1.2);
-    popLabel.textContent = labels[pops % labels.length];
-    pops++;
+  const labels = ['Cheers!', 'One more', 'Santé!', 'To Monaco'];
+  document.querySelectorAll('.pop').forEach((pop) => {
+    const label = pop.querySelector('.pop__label');
+    const first = label.textContent;
+    let pops = 0;
+    pop.addEventListener('click', () => {
+      pop.classList.remove('popped');
+      void pop.offsetWidth;
+      pop.classList.add('popped');
+      const r = pop.getBoundingClientRect();
+      spawn('confetti', r.left + r.width / 2, r.top, 90, 1.1);
+      spawn('bill', r.left + r.width / 2, r.top, 18, 1.2);
+      pops++;
+      label.textContent = [...labels, first][(pops - 1) % (labels.length + 1)];
+    });
   });
 
   // полоса загрузки на обложке

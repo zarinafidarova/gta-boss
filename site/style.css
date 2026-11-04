@@ -512,8 +512,8 @@ p, h1, h2, figure, ul, dl, dd { margin: 0; }
   place-content: center;
   justify-items: center;
   pointer-events: none;
-  --win: clamp(0, (var(--p, 0) - .56) * 14, 1);
-  opacity: min(var(--win), clamp(0, (.97 - var(--p, 0)) * 14, 1));
+  --win: clamp(0, (var(--p, 0) - var(--at, .56)) * 14, 1);
+  opacity: min(var(--win), clamp(0, (var(--until, .97) - var(--p, 0)) * 14, 1));
   transform: scale(calc(2 - var(--win))) rotate(-4deg);
 }
 .jackpot__script {
@@ -710,6 +710,126 @@ p, h1, h2, figure, ul, dl, dd { margin: 0; }
   -webkit-text-stroke: 1.5px var(--ink);
   text-shadow: 3px 3px 0 var(--ink);
   transform: rotate(-5deg);
+}
+
+/* ---------- вторая миссия: гонка ---------- */
+
+/* экран загрузки второй миссии оживает, только когда до него доскроллили */
+.js .cover--gp .logo span,
+.js .cover--gp .logo__script,
+.js .cover--gp .cover__kicker,
+.js .cover--gp .loading__bar i { animation-play-state: paused; }
+.js .cover--gp.on .logo span,
+.js .cover--gp.on .logo__script,
+.js .cover--gp.on .cover__kicker,
+.js .cover--gp.on .loading__bar i { animation-play-state: running; }
+.cover--gp .cover__img { object-position: 45% 30%; }
+.cover__kicker {
+  justify-self: start;
+  width: max-content;
+  margin-bottom: 10px;
+  font-weight: 800;
+  font-size: 15px;
+  letter-spacing: .32em;
+  text-transform: uppercase;
+  color: #fff;
+  background: var(--ink);
+  padding: 4px 10px 4px 13px;
+  animation: rise .6s var(--out) both;
+}
+
+.next {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  font-family: var(--f-logo);
+  font-size: clamp(26px, 7vw, 44px);
+  line-height: 1;
+  text-transform: lowercase;
+  text-decoration: none;
+  color: #fff;
+  -webkit-text-stroke: 6px var(--ink);
+  paint-order: stroke fill;
+}
+.next i {
+  width: 18px;
+  height: 18px;
+  border-right: 4px solid var(--ink);
+  border-bottom: 4px solid var(--ink);
+  rotate: 45deg;
+  animation: nudge 1.2s ease-in-out infinite;
+}
+.next:focus-visible { outline: 4px solid var(--coral); outline-offset: 6px; }
+
+.hud__race {
+  display: none;
+  gap: 14px;
+  margin-top: 4px;
+  color: #fff;
+  font-weight: 800;
+  -webkit-text-stroke: 4px var(--ink);
+  paint-order: stroke fill;
+}
+.hud.race .hud__race { display: flex; }
+.hud.race .hud__stars { display: none; }
+.hud__race span { display: flex; align-items: baseline; gap: 3px; }
+.hud__race small { font-size: 14px; letter-spacing: .1em; text-transform: uppercase; }
+.hud__race b { font-family: var(--f-logo); font-weight: 400; font-size: 28px; line-height: 1; color: var(--gold); font-variant-numeric: tabular-nums; }
+.hud__race b.bump { animation: bump .3s var(--pop); }
+
+.radar__race { display: none; }
+.radar.race .radar__race { display: inline; }
+.radar.race .radar__route,
+.radar.race .radar__road,
+.radar.race g[clip-path] > .radar__blip { display: none; }
+.radar__circuit { fill: none; stroke: var(--ink); stroke-width: 10; stroke-linejoin: round; }
+.radar__blip--flag rect { fill: #fff; }
+.radar__blip--flag path { fill: var(--ink); }
+
+/* стартовые огни */
+.lights {
+  position: absolute;
+  top: calc(env(safe-area-inset-top, 0px) + 18px);
+  left: 50%;
+  translate: -50% 0;
+  display: flex;
+  gap: 8px;
+  padding: 10px 12px;
+  background: var(--ink);
+  border: 3px solid #3a3436;
+  border-radius: 10px;
+}
+.lights i {
+  width: clamp(24px, 7vw, 40px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #3b1416;
+  box-shadow: inset 0 0 0 3px #000;
+}
+.lights i.on {
+  background: radial-gradient(circle at 40% 35%, #ffd1d1, var(--cop-red) 45%, #a3000c);
+  box-shadow: 0 0 18px 4px rgba(255, 45, 61, .7);
+}
+.lights.out { opacity: 0; transition: opacity .3s .4s; }
+.jackpot__sum--go {
+  font-size: clamp(64px, 22vw, 180px);
+  color: var(--cash);
+}
+
+/* туннель: темнеет, потом ослепительный выезд */
+.tunnel-dark {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 70% 45%, transparent 18%, rgba(8, 6, 10, .92) 70%);
+  opacity: min(clamp(0, (var(--p, 0) - .04) * 5, 1), clamp(0, (.82 - var(--p, 0)) * 6, 1));
+}
+.tunnel-exit {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(circle at 80% 40%, #fff, rgba(255, 250, 235, .95) 45%, rgba(255, 240, 200, .6));
+  opacity: min(clamp(0, (var(--p, 0) - .74) * 7, 1), clamp(0, (1 - var(--p, 0)) * 9, 1));
 }
 
 /* ---------- телефоны ---------- */

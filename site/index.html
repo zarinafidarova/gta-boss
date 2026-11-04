@@ -33,6 +33,7 @@
 <div class="hud" aria-hidden="true">
   <div class="hud__clock" id="clock">08:05</div>
   <div class="hud__cash" id="cash">$1,250</div>
+  <div class="hud__race" id="race"><span><small>Pos</small><b id="pos">12</b><small>/12</small></span><span><small>Lap</small><b id="lap">1</b><small>/3</small></span></div>
   <div class="hud__stars" id="stars">
     <svg viewBox="0 0 24 24"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z"/></svg>
     <svg viewBox="0 0 24 24"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z"/></svg>
@@ -53,6 +54,10 @@
       <g class="radar__blip" transform="translate(30 30)"><rect x="-7" y="-7" width="14" height="14" rx="3"/></g>
       <g class="radar__blip radar__blip--cash" transform="translate(118 134)"><circle r="9"/><text y="4.5">$</text></g>
       <g class="radar__blip radar__blip--boat" transform="translate(186 182)"><circle r="8"/></g>
+      <g class="radar__race">
+        <path class="radar__circuit" id="circuit" d="M60 120C58 84 88 62 120 70S172 98 160 132 118 172 88 160 62 148 60 120Z"/>
+        <g class="radar__blip radar__blip--flag" transform="translate(60 120)"><rect x="-7" y="-7" width="14" height="14"/><path d="M-7-7h7v7h-7zM0 0h7v7H0z"/></g>
+      </g>
       <path class="radar__player" id="player" d="M0-9L7 7 0 3-7 7Z"/>
     </g>
     <circle cx="100" cy="100" r="96" class="radar__rim"/>
@@ -129,7 +134,7 @@
     <p class="card__place">D6007 · 12 km</p>
   </section>
 
-  <section class="pin" id="drive" data-scene data-pin data-time="860 900" data-route="0 .56" style="--len:300vh" aria-label="Дорога по серпантину">
+  <section class="pin" id="drive" data-scene data-pin data-time="860 900" data-route="0 .56" data-speed="40 187" style="--len:300vh" aria-label="Дорога по серпантину">
     <div class="pin__view">
       <div class="stage" data-ar="1.5">
         <img src="assets/riviera/drive.webp" width="1536" height="1024" loading="lazy" alt="Он ведёт серебристый ретро-кабриолет по серпантину над морем, внизу Монако и яхты">
@@ -137,7 +142,7 @@
       <div class="speedlines" aria-hidden="true"></div>
       <div class="speedo" aria-hidden="true">
         <svg viewBox="0 0 120 70"><path class="speedo__arc" d="M10 64A50 50 0 0 1 110 64"/><path class="speedo__fill" d="M10 64A50 50 0 0 1 110 64" pathLength="1"/></svg>
-        <span class="speedo__num" id="kmh">40</span><span class="speedo__unit">km/h</span>
+        <span class="speedo__num">40</span><span class="speedo__unit">km/h</span>
       </div>
       <p class="objective" style="--a:.15;--b:.85">Go to the <b>Casino</b>.</p>
     </div>
@@ -231,8 +236,153 @@
         <div><dt>Style</dt><dd>100%</dd></div>
       </dl>
     </div>
-    <button class="pop" id="pop" type="button"><span class="pop__cork" aria-hidden="true"></span><span id="pop-label">Pop the champagne</span></button>
-    <p class="passed__end">The End</p>
+    <button class="pop" type="button"><span class="pop__cork" aria-hidden="true"></span><span class="pop__label">Pop the champagne</span></button>
+    <a class="next" href="#gp">Next mission <i aria-hidden="true"></i></a>
+  </section>
+
+  <!-- ================= Миссия 2: Grand Prix ================= -->
+
+  <header class="cover cover--gp" id="gp" data-scene data-map="race" data-time="540 540" data-route="0 0">
+    <img class="cover__img" src="assets/grandprix/cover.webp" width="1536" height="1024" loading="lazy" alt="Коллаж: он в белом гоночном комбинезоне со шлемом под мышкой, вокруг белый ретро-болид номер 7, туннель, трибуны и подиум с шампанским">
+    <div class="cover__shade" aria-hidden="true"></div>
+    <div class="cover__title">
+      <p class="cover__kicker">One week later</p>
+      <h2 class="logo"><span>grand</span><span>prix</span></h2>
+      <p class="logo__script">Monte-Carlo · 1974</p>
+    </div>
+    <div class="loading" aria-hidden="true">
+      <span class="loading__spinner"></span>
+      <span class="loading__label">Loading</span>
+      <span class="loading__bar"><i></i></span>
+    </div>
+  </header>
+
+  <section class="card" data-scene data-map="race" data-time="540 545" data-route="0 0">
+    <p class="card__num">Mission 07</p>
+    <h2 class="card__title">Paddock Rush</h2>
+    <p class="card__place">Port Hercule · Garage 7</p>
+  </section>
+
+  <section class="pin" id="paddock" data-scene data-pin data-map="race" data-time="545 570" data-route="0 0" style="--len:260vh" aria-label="Утро в паддоке">
+    <div class="pin__view">
+      <div class="stage" data-ar="1.5">
+        <img src="assets/grandprix/paddock.webp" width="1536" height="1024" loading="lazy" alt="В паддоке у гавани усатый владелец команды протягивает ему шлем, механики готовят белый болид номер 7, а заболевшего пилота с градусником уводят врачи">
+      </div>
+      <p class="objective" style="--a:.55;--b:.97">Replace the <b>driver</b>.</p>
+    </div>
+  </section>
+
+  <section class="card" data-scene data-map="race" data-time="570 575" data-route="0 0">
+    <p class="card__num">Mission 08</p>
+    <h2 class="card__title">Suit Up</h2>
+    <p class="card__place">Car No. 7</p>
+  </section>
+
+  <section class="pin" id="gear" data-scene data-pin data-map="race" data-time="575 600" data-route="0 0" style="--len:320vh" aria-label="Экипировка">
+    <div class="pin__view">
+      <div class="stage" data-ar="1.5">
+        <img src="assets/grandprix/gear.webp" width="1536" height="1024" loading="lazy" alt="Вид сверху на скамейку в гараже: шлем с красной полосой и очками, кожаные перчатки, авиаторы, ключ и белый комбинезон с номером 7, его рука берёт шлем">
+        <span class="mark" style="--x:36%;--y:30%;--t:.12"></span>
+        <span class="mark" style="--x:47%;--y:22%;--t:.26"></span>
+        <span class="mark" style="--x:27%;--y:76%;--t:.4"></span>
+        <span class="mark" style="--x:45%;--y:59%;--t:.54"></span>
+        <span class="mark" style="--x:52%;--y:76%;--t:.68"></span>
+        <span class="mark" style="--x:76%;--y:44%;--t:.82"></span>
+      </div>
+      <ul class="check">
+        <li style="--t:.12">Helmet</li>
+        <li style="--t:.26">Goggles</li>
+        <li style="--t:.4">Gloves</li>
+        <li style="--t:.54">Aviators</li>
+        <li style="--t:.68">Ignition key</li>
+        <li style="--t:.82">Race suit</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="card" data-scene data-map="race" data-time="600 840" data-route="0 0">
+    <p class="card__num">Mission 09</p>
+    <h2 class="card__title">Lights Out</h2>
+    <p class="card__place">3 laps · 12 cars</p>
+  </section>
+
+  <section class="pin" id="grid" data-scene data-pin data-map="race" data-time="840 842" data-route="0 0" data-pos="12 12" data-lap="1 1" style="--len:300vh" aria-label="Стартовая решётка">
+    <div class="pin__view">
+      <div class="stage" data-ar="0.6667">
+        <img src="assets/grandprix/grid.webp" width="1024" height="1536" loading="lazy" alt="На стартовой решётке он в шлеме и очках за рулём белого болида номер 7, рядом косится усатый соперник в зелёном болиде номер 1, судья поднял флаг, горят красные огни старта">
+      </div>
+      <div class="lights" id="lights" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+      <div class="jackpot" style="--at:.66;--until:.95" aria-hidden="true"><span class="jackpot__sum jackpot__sum--go">GO!</span></div>
+    </div>
+  </section>
+
+  <section class="pin" id="harbor" data-scene data-pin data-map="race" data-time="842 860" data-route="0 .36" data-pos="12 4" data-lap="1 2" data-speed="120 238" style="--len:280vh" aria-label="Обгон вдоль гавани">
+    <div class="pin__view">
+      <div class="stage" data-ar="1.5">
+        <img src="assets/grandprix/harbor.webp" width="1536" height="1024" loading="lazy" alt="Трасса вдоль гавани с яхтами: белый болид номер 7 обгоняет соперников, впереди зелёный болид номер 1">
+      </div>
+      <div class="speedlines" aria-hidden="true"></div>
+      <div class="speedo" aria-hidden="true">
+        <svg viewBox="0 0 120 70"><path class="speedo__arc" d="M10 64A50 50 0 0 1 110 64"/><path class="speedo__fill" d="M10 64A50 50 0 0 1 110 64" pathLength="1"/></svg>
+        <span class="speedo__num">120</span><span class="speedo__unit">km/h</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="pin pin--tunnel" id="tunnel" data-scene data-pin data-map="race" data-time="860 868" data-route=".36 .62" data-pos="4 2" data-lap="2 2" data-speed="250 284" style="--len:280vh" aria-label="Туннель">
+    <div class="pin__view">
+      <div class="stage" data-ar="1.5">
+        <img src="assets/grandprix/tunnel.webp" width="1536" height="1024" loading="lazy" alt="В тёмном туннеле он на огромной скорости догоняет зелёный болид номер 1, из-под днища летят искры, впереди ослепительный выезд">
+      </div>
+      <div class="speedlines" aria-hidden="true"></div>
+      <span class="tunnel-dark" aria-hidden="true"></span>
+      <span class="tunnel-exit" aria-hidden="true"></span>
+      <div class="speedo" aria-hidden="true">
+        <svg viewBox="0 0 120 70"><path class="speedo__arc" d="M10 64A50 50 0 0 1 110 64"/><path class="speedo__fill" d="M10 64A50 50 0 0 1 110 64" pathLength="1"/></svg>
+        <span class="speedo__num">250</span><span class="speedo__unit">km/h</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="pin" id="hairpin" data-scene data-pin data-map="race" data-time="868 885" data-route=".62 .92" data-pos="2 1" data-lap="3 3" style="--len:280vh" aria-label="Шпилька у отеля">
+    <div class="pin__view">
+      <div class="stage" data-ar="1.5">
+        <img src="assets/grandprix/hairpin.webp" width="1536" height="1024" loading="lazy" alt="В шпильке у отеля белый болид номер 7 в заносе обходит зелёный болид номер 1, зрители на балконах вскочили">
+      </div>
+      <div class="jackpot" style="--at:.58;--until:.96" aria-hidden="true"><span class="jackpot__script">Dépassement!</span><span class="jackpot__sum">P1</span></div>
+    </div>
+  </section>
+
+  <section class="pin" id="finish" data-scene data-pin data-map="race" data-time="885 890" data-route=".92 1" data-pos="1 1" data-lap="3 3" style="--len:260vh" aria-label="Финиш">
+    <div class="pin__view">
+      <div class="stage" data-ar="1.5">
+        <img src="assets/grandprix/finish.webp" width="1536" height="1024" loading="lazy" alt="Клетчатый флаг: он пересекает финишную черту на нос впереди зелёного болида и поднимает кулак, трибуны ликуют">
+      </div>
+      <div class="jackpot" style="--at:.48;--until:.97" aria-hidden="true"><span class="jackpot__script">Vainqueur!</span><span class="jackpot__sum">1st</span></div>
+    </div>
+  </section>
+
+  <section class="sticker-scene" id="podium" data-scene data-map="race" data-time="1170 1180" data-route="1 1">
+    <figure class="sticker sticker--tall" style="--tilt:-2deg">
+      <img src="assets/grandprix/podium.webp" srcset="assets/grandprix/podium-sm.webp 640w, assets/grandprix/podium.webp 1024w" sizes="(max-width: 560px) 92vw, 460px" width="1024" height="1536" loading="lazy" alt="На закате он на верхней ступени подиума поднимает кубок и обливает шампанским недовольного усатого соперника">
+      <span class="flashbulb" style="--x:20%;--y:85%;--dl:.2s"></span>
+      <span class="flashbulb" style="--x:80%;--y:88%;--dl:.8s"></span>
+      <span class="flashbulb" style="--x:55%;--y:92%;--dl:1.4s"></span>
+    </figure>
+  </section>
+
+  <section class="passed" data-scene data-map="race" data-time="1180 1190" data-route="1 1">
+    <div class="passed__band">
+      <h2 class="passed__title">mission passed</h2>
+      <p class="passed__respect">Respect +</p>
+      <dl class="passed__stats">
+        <div><dt>Position</dt><dd>1st</dd></div>
+        <div><dt>Best lap</dt><dd>1:24.7</dd></div>
+        <div><dt>Prize money</dt><dd>+$1,000,000</dd></div>
+      </dl>
+    </div>
+    <button class="pop" type="button"><span class="pop__cork" aria-hidden="true"></span><span class="pop__label">Spray the champagne</span></button>
+    <p class="passed__end">To be continued…</p>
   </section>
 
 </main>
